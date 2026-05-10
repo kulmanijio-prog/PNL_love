@@ -58,7 +58,7 @@ export type Database = {
           total_pnl: number | null
           underlying: string | null
           upload_id: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           brokerage?: number | null
@@ -85,7 +85,7 @@ export type Database = {
           total_pnl?: number | null
           underlying?: string | null
           upload_id: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           brokerage?: number | null
@@ -112,7 +112,7 @@ export type Database = {
           total_pnl?: number | null
           underlying?: string | null
           upload_id?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -146,7 +146,7 @@ export type Database = {
           turnover_equity_intraday: number | null
           turnover_futures: number | null
           turnover_options: number | null
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           charges?: number | null
@@ -169,7 +169,7 @@ export type Database = {
           turnover_equity_intraday?: number | null
           turnover_futures?: number | null
           turnover_options?: number | null
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           charges?: number | null
@@ -192,7 +192,7 @@ export type Database = {
           turnover_equity_intraday?: number | null
           turnover_futures?: number | null
           turnover_options?: number | null
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }

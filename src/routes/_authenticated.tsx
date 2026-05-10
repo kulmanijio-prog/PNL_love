@@ -1,14 +1,8 @@
-import { createFileRoute, Outlet, redirect, Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
-import { LayoutDashboard, Table2, Upload, FolderOpen, LogOut, Terminal } from "lucide-react";
-import { useEffect, useState } from "react";
+import { createFileRoute, Outlet, Link, useRouterState } from "@tanstack/react-router";
+import { LayoutDashboard, Table2, Upload, FolderOpen, Terminal } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated")({
-  beforeLoad: async () => {
-    const { data } = await supabase.auth.getSession();
-    if (!data.session) throw redirect({ to: "/login" });
-  },
-  component: AuthLayout,
+  component: AppLayout,
 });
 
 const nav = [
@@ -18,25 +12,17 @@ const nav = [
   { to: "/uploads", label: "Reports", icon: FolderOpen },
 ] as const;
 
-function AuthLayout() {
-  const navigate = useNavigate();
+function AppLayout() {
   const path = useRouterState({ select: (s) => s.location.pathname });
-  const [email, setEmail] = useState<string>("");
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? ""));
-  }, []);
-
-  const signOut = async () => { await supabase.auth.signOut(); navigate({ to: "/login" }); };
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
       <aside className="hidden w-56 flex-col border-r border-border bg-surface md:flex">
         <div className="flex items-center gap-2 border-b border-border px-4 py-3">
           <Terminal className="h-4 w-4 text-amber" />
-          <span className="font-mono text-xs uppercase tracking-widest">
+          <Link to="/" className="font-mono text-xs uppercase tracking-widest">
             <span className="text-amber">TERMINAL</span><span className="text-muted-foreground"> //P&L</span>
-          </span>
+          </Link>
         </div>
         <nav className="flex-1 space-y-px p-2">
           {nav.map((n) => {
@@ -52,12 +38,6 @@ function AuthLayout() {
             );
           })}
         </nav>
-        <div className="border-t border-border p-3">
-          <div className="truncate font-mono text-[10px] uppercase tracking-wider text-muted-foreground">{email}</div>
-          <button onClick={signOut} className="mt-2 flex w-full items-center gap-2 px-1 py-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground hover:text-loss">
-            <LogOut className="h-3 w-3" /> Sign out
-          </button>
-        </div>
       </aside>
       <main className="min-w-0 flex-1">
         <Outlet />

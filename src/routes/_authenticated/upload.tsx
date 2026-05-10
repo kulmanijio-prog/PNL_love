@@ -48,14 +48,10 @@ function UploadPage() {
     setBusy(true);
     try {
       // Upload original file to storage
-      const { data: u } = await supabase.auth.getUser();
-      const userId = u.user?.id;
       let storagePath: string | null = null;
-      if (userId) {
-        const path = `${userId}/${Date.now()}-${file.name}`;
-        const { error: upErr } = await supabase.storage.from("reports").upload(path, file, { upsert: false });
-        if (!upErr) storagePath = path;
-      }
+      const path = `public/${Date.now()}-${file.name}`;
+      const { error: upErr } = await supabase.storage.from("reports").upload(path, file, { upsert: false });
+      if (!upErr) storagePath = path;
 
       const result = await saveFn({
         data: {

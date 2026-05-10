@@ -222,5 +222,35 @@ export async function parseKotakFile(file: File): Promise<ParseResult> {
     summary.charges_stt_ctt = chargeStt;
   }
 
+  // Derive summary aggregates from trades (Sheet 1 KV layout is unreliable).
+  let netPnl = 0, totalPnl = 0, totalCharges = 0;
+  let tEqDel = 0, tEqIntra = 0, tFut = 0, tOpt = 0;
+  for (const t of trades) {
+    netPnl += t.net_pnl;
+    totalPnl += t.total_pnl || t.gross_realized_pnl || (t.net_pnl + t.total_charges);
+    totalCharges += t.total_charges || (t.brokerage + t.gst + t.misc + t.stt_ctt);
+    const turn = (t.buy_amt || 0) + (t.sell_amt || 0);
+    const sec = (t.security_type || "").toUpperCase();
+    if (sec.startsWith("FUT")) tFut += turn;
+    else if (sec.startsWith("OPT") || sec === "IO") tOpt += turn;
+    else if (sec === "EQ" || sec === "BE" || sec === "EQUITY") {
+      if (t.intraday_pnl && t.intraday_pnl !== 0) tEqIntra += turn;
+      else tEqDel += turn;
+    } else {
+      // Unknown/blank security type — treat as options if script looks like an option, else equity delivery
+      if (t.option_type) tOpt += turn;
+      else tEqDel += turn;
+    }
+  }
+
+  // Prefer values from sheet 1 if non-zero, otherwise use derived
+  if (!summary.net_pnl) summary.net_pnl = netPnl;
+  if (!summary.realized_pnl) summary.realized_pnl = totalPnl;
+  if (!summary.charges) summary.charges = totalCharges;
+  if (!summary.turnover_equity_delivery) summary.turnover_equity_delivery = tEqDel;
+  if (!summary.turnover_equity_intraday) summary.turnover_equity_intraday = tEqIntra;
+  if (!summary.turnover_futures) summary.turnover_futures = tFut;
+  if (!summary.turnover_options) summary.turnover_options = tOpt;
+
   return { summary, trades };
 }

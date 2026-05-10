@@ -3,7 +3,7 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 const tradeSchema = z.object({
-  script_name: z.string().min(1).max(200),
+  script_name: z.string().min(1).max(500),
   security_type: z.string().nullable(),
   underlying: z.string().nullable(),
   expiry: z.string().nullable(),

@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 const tradeSchema = z.object({
   script_name: z.string().min(1).max(200),
@@ -52,24 +52,20 @@ const inputSchema = z.object({
 });
 
 export const saveUpload = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => inputSchema.parse(input))
-  .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
-
-    const { data: up, error } = await supabase
+  .handler(async ({ data }) => {
+    const { data: up, error } = await supabaseAdmin
       .from("uploads")
-      .insert({ ...data.upload, user_id: userId })
+      .insert({ ...data.upload })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
 
     if (data.trades.length) {
-      const rows = data.trades.map((t) => ({ ...t, upload_id: up.id, user_id: userId }));
-      // chunk inserts of 500
+      const rows = data.trades.map((t) => ({ ...t, upload_id: up.id }));
       for (let i = 0; i < rows.length; i += 500) {
         const chunk = rows.slice(i, i + 500);
-        const { error: e2 } = await supabase.from("trades").insert(chunk);
+        const { error: e2 } = await supabaseAdmin.from("trades").insert(chunk);
         if (e2) throw new Error(e2.message);
       }
     }
@@ -77,10 +73,8 @@ export const saveUpload = createServerFn({ method: "POST" })
   });
 
 export const listUploads = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { supabase } = context;
-    const { data, error } = await supabase
+  .handler(async () => {
+    const { data, error } = await supabaseAdmin
       .from("uploads")
       .select("id, file_name, client_name, client_code, period_from, period_to, realized_pnl, net_pnl, charges, created_at")
       .order("created_at", { ascending: false });
@@ -89,30 +83,27 @@ export const listUploads = createServerFn({ method: "GET" })
   });
 
 export const getUpload = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((d: { id?: string | null }) => ({ id: d.id ?? null }))
-  .handler(async ({ data, context }) => {
-    const { supabase } = context;
+  .handler(async ({ data }) => {
     let id = data.id;
     if (!id) {
-      const { data: latest } = await supabase
+      const { data: latest } = await supabaseAdmin
         .from("uploads").select("id").order("created_at", { ascending: false }).limit(1).maybeSingle();
       id = latest?.id ?? null;
     }
     if (!id) return { upload: null, trades: [] };
 
-    const { data: upload, error } = await supabase.from("uploads").select("*").eq("id", id).maybeSingle();
+    const { data: upload, error } = await supabaseAdmin.from("uploads").select("*").eq("id", id).maybeSingle();
     if (error) throw new Error(error.message);
-    const { data: trades, error: e2 } = await supabase.from("trades").select("*").eq("upload_id", id);
+    const { data: trades, error: e2 } = await supabaseAdmin.from("trades").select("*").eq("upload_id", id);
     if (e2) throw new Error(e2.message);
     return { upload, trades: trades ?? [] };
   });
 
 export const deleteUpload = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
-  .handler(async ({ data, context }) => {
-    const { error } = await context.supabase.from("uploads").delete().eq("id", data.id);
+  .handler(async ({ data }) => {
+    const { error } = await supabaseAdmin.from("uploads").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

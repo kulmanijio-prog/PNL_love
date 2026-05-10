@@ -21,8 +21,7 @@ function Landing() {
             <span className="text-muted-foreground">// PORTFOLIO</span>
           </div>
           <nav className="flex items-center gap-3 text-sm">
-            <Link to="/login" className="text-muted-foreground hover:text-foreground">Sign in</Link>
-            <Link to="/login" className="inline-flex items-center gap-1 border border-amber bg-amber/10 px-3 py-1.5 font-mono text-xs uppercase tracking-wider text-amber hover:bg-amber/20">
+            <Link to="/dashboard" className="inline-flex items-center gap-1 border border-amber bg-amber/10 px-3 py-1.5 font-mono text-xs uppercase tracking-wider text-amber hover:bg-amber/20">
               Launch <ArrowRight className="h-3 w-3" />
             </Link>
           </nav>
@@ -40,7 +39,7 @@ function Landing() {
               Drop in a Kotak gain/loss report. Get instant realized vs net P&L, turnover by segment, charge composition, instrument heatmaps, and trade-wise drilldown — built for traders who think in tickers, not tabs.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link to="/login" className="inline-flex items-center gap-2 border border-amber bg-amber px-5 py-3 font-mono text-sm uppercase tracking-wider text-background hover:bg-amber/90">
+              <Link to="/dashboard" className="inline-flex items-center gap-2 border border-amber bg-amber px-5 py-3 font-mono text-sm uppercase tracking-wider text-background hover:bg-amber/90">
                 Open terminal <ArrowRight className="h-4 w-4" />
               </Link>
               <a href="#features" className="inline-flex items-center gap-2 border border-border px-5 py-3 font-mono text-sm uppercase tracking-wider text-foreground hover:border-amber/60">

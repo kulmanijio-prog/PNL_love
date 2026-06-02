@@ -77,10 +77,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Bloomberg-style trading dashboard for analyzing realized P&L, turnover, charges and trade-wise breakdowns from Kotak gain/loss reports." },
       { name: "author", content: "Terminal" },
       { property: "og:title", content: "TERMINAL // Portfolio P&L Analytics" },
-      { property: "og:description", content: "Analyze realized P&L, turnover and trade-wise charges from your broker statements." },
+      { property: "og:description", content: "Bloomberg-style trading dashboard for analyzing realized P&L, turnover, charges and trade-wise breakdowns from Kotak gain/loss reports." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "TERMINAL // Portfolio P&L Analytics" },
+      { name: "twitter:description", content: "Bloomberg-style trading dashboard for analyzing realized P&L, turnover, charges and trade-wise breakdowns from Kotak gain/loss reports." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/6516e929-65c3-41a8-a8d6-46a8a7454c2e" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/6516e929-65c3-41a8-a8d6-46a8a7454c2e" },
     ],
     links: [
       {

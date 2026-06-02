@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Table2, Upload, FolderOpen, Terminal } from "lucide-react";
+import { LayoutDashboard, Table2, Upload, FolderOpen, Terminal, Shield } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AppLayout,
@@ -10,6 +10,7 @@ const nav = [
   { to: "/trades", label: "Trades", icon: Table2 },
   { to: "/upload", label: "Import", icon: Upload },
   { to: "/uploads", label: "Reports", icon: FolderOpen },
+  { to: "/admin", label: "Admin", icon: Shield },
 ] as const;
 
 function AppLayout() {
